@@ -9,7 +9,37 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Tipo {
+  Normal
+  Importante
+  Prova
+}
+
 model Class {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
+  id               Int           @id @default(autoincrement())
+  description      String        @db.VarChar(255)
+  date             DateTime
+  turno            Int           @default(1)
+  tipo             Tipo          @default(Normal)
+  professor        Professor     @relation(fields: [professorId], references: [id])
+  professorId      Int
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Professor {
+  id                Int             @id @default(autoincrement())
+  name              String    
+  firstClasses      Horarios[]      @relation("TeachFirst")
+  secondClasses     Horarios[]      @relation("TeachSecond")
+  class             Class[]
+}
+
+model Horarios {
+  id                 Int           @id @default(autoincrement())
+  abreviacao         String?        
+  firstProfessor     Professor     @relation("TeachFirst", fields: [firstProfessorId], references: [id])
+  firstProfessorId   Int
+  secondProfessor    Professor     @relation("TeachSecond", fields: [secondProfessorId], references: [id])
+  secondProfessorId  Int
 }

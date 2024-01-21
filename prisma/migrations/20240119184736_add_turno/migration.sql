@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Class" ADD COLUMN     "turno" INTEGER NOT NULL DEFAULT 1;
