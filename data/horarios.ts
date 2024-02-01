@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma"
+import db from "@/lib/db"
 
 export const getHorarios = async () => {
-    const horarios = await prisma.horarios.findMany({
+    const horarios = await db.horarios.findMany({
         orderBy: {
             id: 'asc'
         }, include: {

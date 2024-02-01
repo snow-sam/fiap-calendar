@@ -1,20 +1,7 @@
-import { prisma } from "@/lib/prisma";
-
-export const getFirstAndLastDayOfWeek = () => {
-    // Obtém a data atual
-    const firstDayOfWeek = new Date();
-    const lastDayOfWeek = new Date();
-    firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() || 7))
-    lastDayOfWeek.setDate(lastDayOfWeek.getDate() - (lastDayOfWeek.getDay() || 7) + 5)
-    console.log(firstDayOfWeek.getDate(), lastDayOfWeek.getDate())
-    return {
-        firstDayOfWeek,
-        lastDayOfWeek,
-    };
-}
+import db from "@/lib/db";
 
 export const getClasses = async (firstDayOfWeek: Date, lastDayOfWeek: Date) => {
-    const aulas = await prisma.class.findMany({
+    const aulas = await db.class.findMany({
         where: {
             date: {
                 lte: lastDayOfWeek,
@@ -23,15 +10,18 @@ export const getClasses = async (firstDayOfWeek: Date, lastDayOfWeek: Date) => {
         },
         orderBy: {
             date: 'desc'
-        }, include: {
-            professor: true
+        }, select: {
+            description: true,
+            date: true,
+            turno: true,
+            tipo: true
         }
     })
     return aulas
 }
 
 export const getLastClass = async () => {
-    const aulas = await prisma.class.findFirst({
+    const aulas = await db.class.findFirst({
         where: {
             date: {
                 gte: new Date()

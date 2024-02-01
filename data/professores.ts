@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma"
+import db from "@/lib/db"
 
 export const getProfessores = async () => {
-    const professores = await prisma.professor.findMany({})
+    const professores = await db.professor.findMany({})
     return professores
 }

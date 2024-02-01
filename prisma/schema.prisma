@@ -37,7 +37,6 @@ model Professor {
 
 model Horarios {
   id                 Int           @id @default(autoincrement())
-  abreviacao         String?        
   firstProfessor     Professor     @relation("TeachFirst", fields: [firstProfessorId], references: [id])
   firstProfessorId   Int
   secondProfessor    Professor     @relation("TeachSecond", fields: [secondProfessorId], references: [id])

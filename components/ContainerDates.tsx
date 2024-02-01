@@ -1,28 +1,25 @@
+import { LineDates } from "@/components/LineDates"
+import { getClasses } from '@/data/aulas'
 import { defaultList } from "@/lib/utils"
-import { LineDates } from "./LineDates"
-import { getClasses, getFirstAndLastDayOfWeek } from '@/data/aulas'
-import { getHorarios } from "@/data/horarios"
-import { Horarios } from "@prisma/client"
 
-export const ContainerDates = async () => {
-    const { firstDayOfWeek, lastDayOfWeek } = getFirstAndLastDayOfWeek()
-    const aulas = await getClasses(firstDayOfWeek, lastDayOfWeek)
-    const horarios = await getHorarios()
-    const mapaAulas = defaultList(aulas, (item: any) => item.date.getDay() + 1)
+
+import { format, startOfWeek, endOfWeek, setDay, getDay } from 'date-fns'
+import { ptBR } from 'date-fns/locale';
+
+export const ContainerDates = async ({ horarios }: { horarios: Array<HorarioWithProfessor> }) => {
+    const hoje = new Date()
+    const aulas = await getClasses(startOfWeek(hoje), endOfWeek(hoje))
+    const mapaAulas = defaultList(aulas, ({ date }: any) => getDay(date) + 1)
 
     return (
         <div className="flex flex-col gap-2">
             {
-                horarios.map((horario: Horarios) => { 
-                    const index = horario.id
-                    const currentDay = new Date(firstDayOfWeek.getDate()) 
-                    currentDay.setDate(firstDayOfWeek.getDate() + index)
-                    
+                horarios.map(({ id, firstProfessor, secondProfessor }: HorarioWithProfessor) => {
                     return <LineDates
-                            aulas={mapaAulas[index] ? mapaAulas[index].reverse() : []}
-                            day={currentDay.getDate()}
-                            horario={horario}
-                            key={horario.abreviacao} />
+                        aulas={mapaAulas[id] ? mapaAulas[id].reverse() : []}
+                        day={format(setDay(hoje, id), 'EEEEEE, d', { locale: ptBR })}
+                        professores={[firstProfessor, secondProfessor]}
+                        key={id} />
                 })
             }
         </div>

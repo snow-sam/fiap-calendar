@@ -10,4 +10,17 @@ const connectionString = `${process.env.DATABASE_URL}`
 
 const pool = new Pool({ connectionString })
 const adapter = new PrismaNeon(pool)
-export const prisma = new PrismaClient({ adapter })
+
+const prismaClientSingleton = () => {
+  return new PrismaClient({ adapter })
+}
+
+declare global {
+  var prisma: undefined | ReturnType<typeof prismaClientSingleton>
+}
+
+const prisma = globalThis.prisma ?? prismaClientSingleton()
+
+export default prisma
+
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma
