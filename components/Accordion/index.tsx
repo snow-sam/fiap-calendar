@@ -4,8 +4,8 @@ import { AccordionRoot } from "./AccordionRoot";
 import { AccordionContent } from "./AcordionContent";
 
 export const Accordion = {
-    Root: AccordionRoot,
-    Header: AccordionHeader,
-    Content: AccordionContent,
-    Item: AccordionItem
-}
+  Root: AccordionRoot,
+  Header: AccordionHeader,
+  Content: AccordionContent,
+  Item: AccordionItem,
+};
