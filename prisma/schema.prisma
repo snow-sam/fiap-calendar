@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -9,36 +10,36 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum Tipo {
+enum EventType {
   Normal
   Importante
   Prova
 }
 
-model Class {
-  id               Int           @id @default(autoincrement())
-  description      String        @db.VarChar(255)
-  date             DateTime
-  turno            Int           @default(1)
-  tipo             Tipo          @default(Normal)
-  professor        Professor     @relation(fields: [professorId], references: [id])
-  professorId      Int
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+model Events {
+  id            Int         @id @default(autoincrement())
+  date          DateTime
+  description   String
+  period        Int
+  eventType     EventType
+  schedule      Schedules   @relation(fields: [scheduleId], references: [id])
+  scheduleId    Int
+  createdAt     DateTime    @default(now())
+  updatedAtAt   DateTime    @updatedAt()
 }
 
-model Professor {
-  id                Int             @id @default(autoincrement())
-  name              String    
-  firstClasses      Horarios[]      @relation("TeachFirst")
-  secondClasses     Horarios[]      @relation("TeachSecond")
-  class             Class[]
+model Schedules {
+  id            Int         @id @default(autoincrement())
+  className     String      
+  weekDay       Int
+  teacher       Teachers    @relation(fields: [teacherId], references: [id])
+  teacherId     Int
+  period        Int
+  events        Events[]
 }
 
-model Horarios {
-  id                 Int           @id @default(autoincrement())
-  firstProfessor     Professor     @relation("TeachFirst", fields: [firstProfessorId], references: [id])
-  firstProfessorId   Int
-  secondProfessor    Professor     @relation("TeachSecond", fields: [secondProfessorId], references: [id])
-  secondProfessorId  Int
+model Teachers {
+  id            Int         @id @default(autoincrement())
+  name          String
+  schedules     Schedules[]
 }
